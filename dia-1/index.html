@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Actividad práctica de Funciones en JavaScript — Módulo 4 · Lección 4. 7 retos progresivos + 1 Jefe Final integrador. El alumno resuelve cada reto en su propio archivo .js, versiona con Git (un commit por reto), sube a GitHub y publica en GitHub Pages. SIN soluciones: solo misión, pistas, punto de partida y salida esperada." />
+<title>🎮 Actividad · M4 L4 · Funciones (proyecto + Git + GitHub Pages)</title>
+<style>
+  :root {
+    --bg: #f5f7fb;
+    --paper: #ffffff;
+    --ink: #14223b;
+    --ink-soft: #4a5a76;
+    --brand: #2563eb;
+    --brand-2: #7c3aed;
+    --accent: #0ea5a4;
+    --warn: #b45309;
+    --warn-bg: #fff7ed;
+    --ok: #15803d;
+    --ok-bg: #f0fdf4;
+    --code-bg: #0f172a;
+    --code-ink: #e2e8f0;
+    --code-blue: #7dd3fc;
+    --border: #dbe3ee;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.7;
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 32px 24px 96px; }
+
+  /* ---------- HERO ---------- */
+  header.hero {
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    color: #fff;
+    border-radius: 20px;
+    padding: 44px 40px;
+    margin-bottom: 16px;
+  }
+  header.hero .kicker {
+    text-transform: uppercase; letter-spacing: .2em; font-size: .8rem;
+    opacity: .9; margin: 0 0 12px;
+  }
+  header.hero h1 { margin: 0 0 12px; font-size: clamp(1.8rem, 4.5vw, 2.8rem); line-height: 1.1; }
+  header.hero p { margin: 0; font-size: 1.1rem; opacity: .95; max-width: 760px; }
+
+  /* ---------- REGLAS DEL JUEGO ---------- */
+  .rules {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 26px 30px;
+    margin-bottom: 16px;
+  }
+  .rules h2 { margin: 0 0 12px; font-size: 1.2rem; }
+  .rules ol { margin: 0; padding-left: 22px; }
+  .rules li { margin: 8px 0; }
+  .rules .progress {
+    margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border);
+    font-weight: 600; color: var(--brand-2); font-size: 1.05rem;
+  }
+
+  /* ---------- SETUP / ENTREGA ---------- */
+  .setup {
+    background: linear-gradient(180deg, #ffffff, #eff6ff);
+    border: 1px solid #bae6fd;
+    border-left: 6px solid var(--brand);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-bottom: 16px;
+  }
+  .setup h2 { margin: 0 0 10px; font-size: 1.45rem; color: var(--ink); }
+  .setup > p { margin: 10px 0; }
+  .setup h3 {
+    margin: 28px 0 8px; font-size: 1.1rem; color: var(--brand);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .setup h3 .step {
+    background: var(--brand); color: #fff; width: 28px; height: 28px;
+    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    font-size: .9rem; flex-shrink: 0;
+  }
+  .setup ol, .setup ul { padding-left: 24px; margin: 8px 0; }
+  .setup li { margin: 7px 0; }
+  .setup pre {
+    background: var(--code-bg); color: var(--code-ink);
+    border-radius: 10px; padding: 16px 18px; margin: 10px 0; overflow-x: auto;
+    font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: .88rem; line-height: 1.6; white-space: pre;
+  }
+  .setup pre.tree { color: var(--code-blue); }
+  .setup .opt {
+    background: #f8fafc; border: 1px solid var(--border); border-radius: 10px;
+    padding: 4px 18px 14px; margin: 12px 0;
+  }
+  .setup .opt h4 { margin: 14px 0 6px; font-size: .98rem; color: var(--ink); }
+  .note-box {
+    background: var(--warn-bg); border-left: 5px solid var(--warn);
+    border-radius: 10px; padding: 12px 18px; margin: 14px 0; font-size: .92rem;
+  }
+  .note-box::before { content: "⚠️ "; font-weight: 700; }
+  .git-box {
+    background: #ecfeff; border-left: 5px solid var(--accent);
+    border-radius: 10px; padding: 12px 18px; margin: 14px 0; font-size: .92rem;
+  }
+  .git-box::before { content: "🔧 Git — "; font-weight: 700; color: var(--accent); }
+
+  /* ---------- TARJETA DE RETO ---------- */
+  section.reto {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 30px 32px;
+    margin-top: 26px;
+    box-shadow: 0 1px 3px rgba(20,34,59,.04);
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  section.reto:has(.done input:checked) {
+    border-color: var(--ok);
+    box-shadow: 0 0 0 2px rgba(21,128,61,.18);
+  }
+  section.reto h3 { margin: 0 0 6px; font-size: 1.35rem; color: var(--ink); }
+  section.reto .lead { color: var(--ink-soft); margin: 0 0 16px; }
+
+  .badge {
+    display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.05em;
+    text-transform:uppercase; padding:4px 10px; border-radius:999px; margin-left:10px;
+    vertical-align:middle;
+  }
+  .badge.b1{ background:#dcfce7; color:#166534; }
+  .badge.b2{ background:#fef9c3; color:#854d0e; }
+  .badge.b3{ background:#fee2e2; color:#991b1b; }
+  .badge.final{ background:#ede9fe; color:#5b21b6; }
+
+  .mision {
+    background: #eff6ff;
+    border-left: 5px solid var(--brand);
+    border-radius: 10px;
+    padding: 14px 22px 16px;
+    margin: 16px 0;
+  }
+  .mision::before { content: "🎯 Tu misión"; display:block; font-weight: 700; color: var(--brand); margin-bottom: 6px; }
+  .mision ol { margin: 6px 0 0; padding-left: 22px; }
+  .mision li { margin: 6px 0; }
+  .mision p { margin: 6px 0; }
+
+  details.hint {
+    background: var(--warn-bg);
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    padding: 0 18px;
+    margin: 16px 0;
+  }
+  details.hint summary {
+    cursor: pointer; font-weight: 700; color: var(--warn);
+    padding: 13px 0; list-style: none;
+  }
+  details.hint summary::-webkit-details-marker { display:none; }
+  details.hint summary::before { content: "💡 "; }
+  details.hint[open] summary { border-bottom: 1px dashed #fed7aa; }
+  details.hint ul { margin: 12px 0 16px; padding-left: 22px; }
+  details.hint li { margin: 7px 0; }
+
+  code.inline {
+    background: #eef2f7;
+    color: #b91c63;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: .9em;
+  }
+
+  /* ---------- BLOQUE PUNTO DE PARTIDA (solo lectura, para copiar) ----------
+     Sin estilo "terminal/consola": es solo el código base que el alumno
+     copia a su propio archivo .js. La etiqueta superior indica el archivo. */
+  .lab-head {
+    display: flex; align-items: center; gap: 10px;
+    background: #eef2f7; border-bottom: 1px solid var(--border);
+    padding: 9px 16px;
+  }
+  .lab-head .dots { display: none; }
+  .lab-head .fname { color: var(--ink-soft); font-size: .82rem; font-weight: 600; font-family: "SF Mono", Menlo, monospace; }
+  .starter {
+    margin: 18px 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .starter .lab-head .fname::before { content: "📄 "; }
+  .starter pre.code {
+    margin: 0;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: .95rem;
+    line-height: 1.6;
+    tab-size: 2;
+    white-space: pre;
+  }
+
+  /* ---------- RESULTADO ESPERADO ---------- */
+  .goal {
+    background: #f5f3ff;
+    border-left: 5px solid var(--brand-2);
+    border-radius: 10px;
+    padding: 14px 22px;
+    margin: 16px 0;
+  }
+  .goal::before { content: "✅ En la consola deberías ver algo así"; display:block; font-weight: 700; color: var(--brand-2); margin-bottom: 6px; }
+  .goal pre {
+    margin: 6px 0 0; background: #ffffff; border: 1px solid #ddd6fe; border-radius: 8px;
+    padding: 12px 14px; overflow-x: auto;
+    font-family: "SF Mono", Menlo, monospace; font-size: .9rem; color: #4c1d95; line-height: 1.5;
+  }
+  .goal .nota { font-size: .82rem; color: var(--ink-soft); margin: 10px 0 0; }
+
+  /* ---------- CHECK "LOGRADO" ---------- */
+  label.done {
+    display: inline-flex; align-items: center; gap: 9px;
+    margin-top: 16px; font-weight: 600; color: var(--ink-soft); cursor: pointer;
+    user-select: none;
+  }
+  label.done input { width: 18px; height: 18px; accent-color: var(--ok); cursor: pointer; }
+  section.reto:has(.done input:checked) label.done { color: var(--ok); }
+  label.done .txt-on { display: none; }
+  section.reto:has(.done input:checked) label.done .txt-off { display: none; }
+  section.reto:has(.done input:checked) label.done .txt-on { display: inline; }
+
+  /* commit recordatorio dentro del reto */
+  .commit-tip {
+    margin: 14px 0 0; font-size: .86rem; color: var(--ink-soft);
+    background: #f0fdfa; border: 1px dashed #99f6e4; border-radius: 8px; padding: 10px 14px;
+  }
+  .commit-tip code { background:#ccfbf1; color:#0f766e; padding:2px 7px; border-radius:6px;
+    font-family:"SF Mono", Menlo, monospace; font-size:.88em; }
+
+  /* ---------- TITULO DE PARTE ---------- */
+  .part-title {
+    display: flex; align-items: center; gap: 14px;
+    margin: 56px 0 8px; padding-bottom: 14px;
+    border-bottom: 3px solid var(--brand-2); flex-wrap: wrap;
+  }
+  .part-title .pill {
+    background: var(--brand-2); color: #fff;
+    font-size: .8rem; letter-spacing: .15em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 999px;
+  }
+  .part-title h2 { margin: 0; font-size: 1.6rem; }
+
+  /* ---------- JEFE FINAL ---------- */
+  section.reto.boss {
+    border: 2px solid var(--brand-2);
+    background: linear-gradient(180deg, #ffffff, #faf5ff);
+  }
+  section.reto.boss h3 { color: var(--brand-2); }
+
+  /* ---------- CHECKLIST DE ENTREGA ---------- */
+  .checklist {
+    background: var(--ok-bg); border: 1px solid #bbf7d0;
+    border-left: 6px solid var(--ok); border-radius: var(--radius);
+    padding: 26px 30px; margin-top: 34px;
+  }
+  .checklist h2 { margin: 0 0 6px; font-size: 1.35rem; color: var(--ink); }
+  .checklist > p { margin: 0 0 14px; color: var(--ink-soft); font-size: .95rem; }
+  .checklist label { display: flex; align-items: flex-start; gap: 11px; margin: 10px 0; cursor: pointer; }
+  .checklist input { width: 18px; height: 18px; margin-top: 4px; accent-color: var(--ok); cursor: pointer; flex-shrink: 0; }
+
+  footer { text-align: center; color: var(--ink-soft); font-size: .9rem; margin-top: 64px; }
+  a.back-top { color: var(--brand); text-decoration: none; font-size: .85rem; }
+
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .wrap { padding: 20px 14px 64px; }
+    section.reto { padding: 22px 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===================== HERO ===================== -->
+  <header class="hero">
+    <p class="kicker">Módulo 4 · Lección 04 · Actividad práctica</p>
+    <h1>🎮 Laboratorio de Funciones</h1>
+    <p>7 retos para entrenar TODO lo de funciones, y un <strong>Jefe Final</strong> que lo integra. Esta vez no se juega en una página: vas a resolver cada reto en tu <strong>propio archivo <code style="color:#fff">.js</code></strong>, lo vas a versionar con <strong>Git (un commit por reto)</strong>, subirlo a <strong>GitHub</strong> y publicarlo en <strong>GitHub Pages</strong>. Funciones + Git + entrega real. Así se programa de verdad.</p>
+  </header>
+
+  <!-- ===================== REGLAS ===================== -->
+  <section class="rules">
+    <h2>📜 Cómo se juega</h2>
+    <ol>
+      <li>Primero <strong>arma tu proyecto</strong> (sección de abajo): carpeta, archivos <code class="inline">.js</code>, <code class="inline">index.html</code> y repositorio Git.</li>
+      <li>Lee la <strong>misión</strong> de cada reto. Dice QUÉ lograr, no CÓMO. Eso lo descubres tú.</li>
+      <li><strong>Copia el "punto de partida"</strong> al archivo <code class="inline">.js</code> del reto y escribe ahí tu solución.</li>
+      <li>Pruébalo en tu computador (con <strong>Node</strong> o con <strong>Live Server</strong>) y compara con la <strong>salida esperada</strong>.</li>
+      <li>Cuando un reto funcione: <strong>haz un commit</strong> de ese archivo. Un reto = un commit con mensaje claro.</li>
+      <li>Marca <strong>"Misión cumplida"</strong> y mira subir tu progreso.</li>
+    </ol>
+    <p class="progress">🏅 Progreso: <span id="contador">0</span> / 8 misiones cumplidas</p>
+  </section>
+
+  <!-- ===================== SETUP / ENTREGA ===================== -->
+  <div class="setup">
+    <h2>🚀 Arma y entrega tu proyecto</h2>
+    <p>Esta actividad <strong>no se ejecuta aquí</strong>. Creas tu propio proyecto, lo versionas con Git, lo subes a <strong>GitHub</strong> y lo publicas en <strong>GitHub Pages</strong>. Sigue estos 6 pasos:</p>
+
+    <h3><span class="step">1</span> Crea tu carpeta con esta estructura</h3>
+<pre class="tree">practica-funciones/
+├── index.html        ← carga todos tus archivos .js
+├── README.md         ← describe tu proyecto (buena práctica)
+├── reto-1.js
+├── reto-2.js
+├── reto-3.js
+├── reto-4.js
+├── reto-5.js
+├── reto-6.js
+├── reto-7.js
+└── jefe-final.js     ← el Jefe Final</pre>
+
+    <h3><span class="step">2</span> Copia este index.html base</h3>
+    <p>Pégalo tal cual en tu <code class="inline">index.html</code>. Carga todos tus <code class="inline">.js</code>; los resultados de los <code class="inline">console.log</code> se ven en la <strong>consola del navegador</strong> (tecla <code class="inline">F12</code> → pestaña <em>Console</em>).</p>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="es-CL"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Práctica de Funciones&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Práctica de Funciones — abre la consola (F12)&lt;/h1&gt;
+
+  &lt;script src="reto-1.js"&gt;&lt;/script&gt;
+  &lt;script src="reto-2.js"&gt;&lt;/script&gt;
+  &lt;script src="reto-3.js"&gt;&lt;/script&gt;
+  &lt;script src="reto-4.js"&gt;&lt;/script&gt;
+  &lt;script src="reto-5.js"&gt;&lt;/script&gt;
+  &lt;script src="reto-6.js"&gt;&lt;/script&gt;
+  &lt;script src="reto-7.js"&gt;&lt;/script&gt;
+  &lt;script src="jefe-final.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    <div class="note-box">Para probar en tu computador, abre <code class="inline">index.html</code> con la extensión <strong>Live Server</strong> de VS Code (clic derecho → <em>Open with Live Server</em>) y mira la consola (F12). Si tienes <strong>Node</strong>, también puedes probar cada archivo suelto con <code class="inline">node reto-1.js</code> en la terminal.</div>
+
+    <h3><span class="step">3</span> Inicializa Git en tu carpeta</h3>
+    <p>Abre la terminal <strong>dentro</strong> de <code class="inline">practica-funciones/</code> y crea el repositorio local:</p>
+<pre>git init
+git add .
+git commit -m "chore: estructura inicial del proyecto"</pre>
+    <div class="git-box">cada vez que termines un reto, haces un commit nuevo. Así tu historial cuenta la historia de tu trabajo, reto por reto. NO dejes todo para un solo commit gigante al final: eso es justo lo que NO queremos.</div>
+
+    <h3><span class="step">4</span> Resuelve cada reto y haz un commit por cada uno</h3>
+    <p>Trabaja un reto, pruébalo, y cuando funcione versiónalo. El patrón que repites es siempre el mismo:</p>
+<pre>git add reto-1.js
+git commit -m "feat: reto 1 - funcion presentar"
+
+# ...resuelves el reto 2...
+git add reto-2.js
+git commit -m "feat: reto 2 - funcion multiplicar"</pre>
+    <p>Revisa tu avance cuando quieras con <code class="inline">git status</code> (qué cambió) y <code class="inline">git log --oneline</code> (tu historial de commits).</p>
+
+    <h3><span class="step">5</span> Sube tu proyecto a GitHub</h3>
+    <div class="opt">
+      <h4>Opción A — Por la terminal (recomendada, refuerza Git)</h4>
+      <p>Crea primero un repositorio <strong>vacío</strong> en GitHub llamado <code class="inline">practica-funciones</code>. Luego, dentro de tu carpeta:</p>
+<pre>git branch -M main
+git remote add origin https://github.com/TU-USUARIO/practica-funciones.git
+git push -u origin main</pre>
+      <p>De ahí en adelante, cada vez que hagas commits nuevos, súbelos con un simple <code class="inline">git push</code>.</p>
+      <h4>Opción B — Subiendo archivos por la web</h4>
+      <p>Crea el repositorio en GitHub y arrastra TODOS los archivos (el <code class="inline">index.html</code>, los <code class="inline">.js</code> y el <code class="inline">README.md</code>). Funciona, pero pierdes la práctica de Git: usa esta opción solo si la terminal te falla.</p>
+    </div>
+
+    <h3><span class="step">6</span> Publica en GitHub Pages</h3>
+    <ol>
+      <li>En tu repositorio de GitHub, entra a <strong>Settings</strong>.</li>
+      <li>En el menú izquierdo, abre <strong>Pages</strong>.</li>
+      <li>En <em>Branch</em> elige <code class="inline">main</code> y la carpeta <code class="inline">/ (root)</code>. Guarda.</li>
+      <li>Espera ~1 minuto y entra al enlace que te entrega (algo como <code class="inline">https://TU-USUARIO.github.io/practica-funciones/</code>).</li>
+      <li>Abre la consola (F12) en esa página: ahí se ven los resultados de tus funciones.</li>
+    </ol>
+    <div class="note-box">Lo que entregas es <strong>el enlace de GitHub Pages</strong> y <strong>el enlace del repositorio</strong>. El repo demuestra tu trabajo con Git (tus commits); la página demuestra que corre.</div>
+  </div>
+
+  <!-- ============================================================
+       PARTE 1 — CALENTAMIENTO
+       ============================================================ -->
+  <div class="part-title">
+    <span class="pill">Nivel 1</span>
+    <h2>Calentamiento: definir, invocar y retornar</h2>
+  </div>
+
+  <!-- RETO 1 -->
+  <section class="reto" id="r1">
+    <h3>Reto 1 · Tu primera función <span class="badge b1">Nivel 1</span></h3>
+    <p class="lead">Poder a entrenar: definir una función, recibir un parámetro y devolver con <code class="inline">return</code>.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea una función llamada <code class="inline">presentar</code> que reciba un <strong>nombre</strong>.</li>
+        <li>La función debe <strong>devolver</strong> (no imprimir) el texto: <em>"Hola, me llamo ..."</em> seguido del nombre.</li>
+        <li>Invócala con <strong>dos nombres distintos</strong> y muestra ambos resultados con <code class="inline">console.log</code>.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>La estructura es <code class="inline">function nombre(parametro) { ... }</code>.</li>
+        <li>Para devolver el texto usa <code class="inline">return</code>, y únelo con el nombre usando <code class="inline">+</code>.</li>
+        <li>Definir la función NO la ejecuta. Tienes que <strong>invocarla</strong> con paréntesis y pasarle el nombre.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><div class="dots"><span></span><span></span><span></span></div><span class="fname">reto-1.js — punto de partida</span></div>
+<pre class="code">// Define aquí tu función presentar(nombre)
+
+
+// Invócala con dos nombres distintos y muestra los resultados
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Hola, me llamo Ana
+Hola, me llamo Luis</pre>
+      <p class="nota">Los nombres que uses son tu elección. Lo importante: que la función DEVUELVA el texto y tú lo muestres.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add reto-1.js</code> → <code>git commit -m "feat: reto 1 - funcion presentar"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Misión cumplida!</span></label>
+  </section>
+
+  <!-- RETO 2 -->
+  <section class="reto" id="r2">
+    <h3>Reto 2 · La calculadora reutilizable <span class="badge b1">Nivel 1</span></h3>
+    <p class="lead">Poder a entrenar: parámetros, <code class="inline">return</code> y guardar el resultado en una variable.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea una función <code class="inline">multiplicar</code> que reciba <strong>dos números</strong> y devuelva su producto.</li>
+        <li>Guarda el resultado de multiplicar <strong>6 y 7</strong> en una variable llamada <code class="inline">resultado</code> y muéstrala.</li>
+        <li>Muestra también el <strong>doble</strong> de ese resultado, pero <strong>sin volver a llamar la función</strong> (usa la variable que guardaste).</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Dentro de la función: <code class="inline">return a * b;</code>.</li>
+        <li>Guardar el retorno: <code class="inline">let resultado = multiplicar(6, 7);</code>.</li>
+        <li>El doble es <code class="inline">resultado * 2</code>. Por eso guardar el valor te ahorra llamar la función de nuevo.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><div class="dots"><span></span><span></span><span></span></div><span class="fname">reto-2.js — punto de partida</span></div>
+<pre class="code">// Define multiplicar(a, b)
+
+
+// Guarda multiplicar(6, 7) en una variable y muéstrala
+// Luego muestra su doble usando esa misma variable
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Resultado: 42
+El doble: 84</pre>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add reto-2.js</code> → <code>git commit -m "feat: reto 2 - funcion multiplicar"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Misión cumplida!</span></label>
+  </section>
+
+  <!-- ============================================================
+       PARTE 2 — PARAMETROS Y DECISIONES
+       ============================================================ -->
+  <div class="part-title">
+    <span class="pill">Nivel 2</span>
+    <h2>Parámetros con defecto y decisiones</h2>
+  </div>
+
+  <!-- RETO 3 -->
+  <section class="reto" id="r3">
+    <h3>Reto 3 · El despacho a domicilio <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Poder a entrenar: parámetros con <strong>valor por defecto</strong>.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">calcularEnvio(distancia, costoPorKm)</code> que devuelva <code class="inline">distancia * costoPorKm</code>.</li>
+        <li>El <code class="inline">costoPorKm</code> debe valer <strong>500 por defecto</strong>.</li>
+        <li>Pruébala <strong>dos veces</strong>: una para 10 km <strong>sin pasar el costo</strong> (debe usar 500), y otra para 10 km <strong>pasando 800</strong>.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>El valor por defecto se escribe en la propia definición: <code class="inline">function calcularEnvio(distancia, costoPorKm = 500)</code>.</li>
+        <li>El valor por defecto entra <strong>solo</strong> cuando NO pasas ese argumento.</li>
+        <li>Si pasas el segundo argumento (800), ese gana al valor por defecto.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><div class="dots"><span></span><span></span><span></span></div><span class="fname">reto-3.js — punto de partida</span></div>
+<pre class="code">// Define calcularEnvio(distancia, costoPorKm) con costoPorKm = 500 por defecto
+
+
+// Prueba 1: 10 km SIN pasar el costo (usa 500)
+// Prueba 2: 10 km pasando 800
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Envío (costo por defecto): 5000
+Envío (costo 800): 8000</pre>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add reto-3.js</code> → <code>git commit -m "feat: reto 3 - valor por defecto"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Misión cumplida!</span></label>
+  </section>
+
+  <!-- RETO 4 -->
+  <section class="reto" id="r4">
+    <h3>Reto 4 · El semáforo de notas <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Poder a entrenar: decidir dentro de una función y <strong>salir temprano</strong> con <code class="inline">return</code>.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">clasificarNota(nota)</code>.</li>
+        <li>Si la nota es <strong>4.0 o más</strong>, debe devolver <code class="inline">"Aprobado"</code>. Si es menor, <code class="inline">"Reprobado"</code>.</li>
+        <li>Usa <code class="inline">return</code> para salir de la función apenas sepas la respuesta.</li>
+        <li>Pruébala con <strong>5.5</strong>, <strong>3.9</strong> y <strong>4.0</strong> (ojo con este último: el 4.0 justo, ¿aprueba?).</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Para "4.0 o más" usa <code class="inline">&gt;=</code>, no solo <code class="inline">&gt;</code>. Por eso el 4.0 justo SÍ aprueba.</li>
+        <li>Si entras al <code class="inline">if</code> y haces <code class="inline">return "Aprobado"</code>, la función termina ahí: lo de abajo no corre.</li>
+        <li>No necesitas un <code class="inline">else</code>: si no aprobó, ya solo queda <code class="inline">return "Reprobado"</code>.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><div class="dots"><span></span><span></span><span></span></div><span class="fname">reto-4.js — punto de partida</span></div>
+<pre class="code">// Define clasificarNota(nota)
+
+
+// Pruébala con 5.5, 3.9 y 4.0
+</pre>
+    </div>
+    <div class="goal">
+      <pre>5.5 -> Aprobado
+3.9 -> Reprobado
+4.0 -> Aprobado</pre>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add reto-4.js</code> → <code>git commit -m "feat: reto 4 - return temprano"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Misión cumplida!</span></label>
+  </section>
+
+  <!-- RETO 5 -->
+  <section class="reto" id="r5">
+    <h3>Reto 5 · La caja fuerte (scope) <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Poder a entrenar: entender que <strong>lo declarado dentro de una función no existe fuera</strong>.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea una función <code class="inline">secreto</code> que declare <strong>dentro</strong> una variable local <code class="inline">clave</code> con el valor que quieras, y la <strong>devuelva</strong>.</li>
+        <li>Invócala y muestra el resultado. Funciona ✅.</li>
+        <li>Ahora, en una línea aparte, intenta mostrar <code class="inline">clave</code> directamente (fuera de la función) y <strong>ejecuta</strong> (en tu navegador o con Node).</li>
+        <li>Observa el error en la consola. Escribe un comentario explicando <strong>por qué</strong> ocurrió.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Declara <code class="inline">clave</code> con <code class="inline">let</code> DENTRO de la función.</li>
+        <li>Al llamar <code class="inline">console.log(clave)</code> fuera, verás <code class="inline">ReferenceError: clave is not defined</code>.</li>
+        <li>Eso NO es un bug tuyo: es el <strong>scope</strong> protegiendo lo local. Fuera de la función, esa variable literalmente no existe.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><div class="dots"><span></span><span></span><span></span></div><span class="fname">reto-5.js — punto de partida</span></div>
+<pre class="code">// Define secreto() con una variable LOCAL llamada clave, y devuélvela
+
+
+// Invócala y muestra el resultado (esto SÍ funciona)
+
+
+// Ahora intenta mostrar clave directamente afuera y ejecuta
+// ¿Qué error aparece? Explícalo en un comentario.
+</pre>
+    </div>
+    <div class="goal">
+      <pre>(el valor de tu clave)
+⛔ ReferenceError: clave is not defined</pre>
+      <p class="nota">El error es el objetivo del reto, no un fracaso. Demuestra que entendiste el alcance de las variables. (Si el error corta el resto del archivo, déjalo comentado tras comprobarlo.)</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add reto-5.js</code> → <code>git commit -m "feat: reto 5 - scope local"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Misión cumplida!</span></label>
+  </section>
+
+  <!-- ============================================================
+       PARTE 3 — FUNCIONES QUE COLABORAN
+       ============================================================ -->
+  <div class="part-title">
+    <span class="pill">Nivel 3</span>
+    <h2>Funciones que colaboran entre sí</h2>
+  </div>
+
+  <!-- RETO 6 -->
+  <section class="reto" id="r6">
+    <h3>Reto 6 · El portero del evento <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">Poder a entrenar: una función que <strong>usa a otra función</strong> (reutilizar &gt; repetir).</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">esMayorDeEdad(edad)</code> que devuelva <code class="inline">true</code> o <code class="inline">false</code> (mayor de edad = 18 o más).</li>
+        <li>Crea <code class="inline">mensajeAcceso(edad)</code> que <strong>use</strong> la primera función para devolver <code class="inline">"Acceso permitido"</code> o <code class="inline">"Acceso denegado"</code>.</li>
+        <li><strong>No repitas</strong> la comparación de edad en la segunda función: reutiliza la primera.</li>
+        <li>Prueba <code class="inline">mensajeAcceso</code> con <strong>20</strong> y con <strong>15</strong>.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li><code class="inline">esMayorDeEdad</code> puede devolver directamente la comparación: <code class="inline">return edad &gt;= 18;</code>.</li>
+        <li>Dentro de <code class="inline">mensajeAcceso</code> puedes preguntar: <code class="inline">if (esMayorDeEdad(edad)) { ... }</code>.</li>
+        <li>La gracia: si mañana cambia la edad mínima, la tocas en UN solo lugar.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><div class="dots"><span></span><span></span><span></span></div><span class="fname">reto-6.js — punto de partida</span></div>
+<pre class="code">// 1) Define esMayorDeEdad(edad) -> true / false
+
+
+// 2) Define mensajeAcceso(edad) que USE esMayorDeEdad
+
+
+// 3) Prueba mensajeAcceso con 20 y con 15
+</pre>
+    </div>
+    <div class="goal">
+      <pre>20 -> Acceso permitido
+15 -> Acceso denegado</pre>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add reto-6.js</code> → <code>git commit -m "feat: reto 6 - funciones que colaboran"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Misión cumplida!</span></label>
+  </section>
+
+  <!-- RETO 7 -->
+  <section class="reto" id="r7">
+    <h3>Reto 7 · La fábrica de credenciales <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">Poder a entrenar: <strong>funciones anidadas</strong> (una función dentro de otra).</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">crearTarjeta(nombre, cargo)</code>.</li>
+        <li><strong>Dentro</strong> de ella, define otra función <code class="inline">formatear</code> que arme el texto <em>"nombre — cargo"</em> usando los datos recibidos.</li>
+        <li>La función externa debe <strong>invocar</strong> a <code class="inline">formatear</code> y <strong>retornar</strong> su resultado.</li>
+        <li>Prueba <code class="inline">crearTarjeta</code> con un nombre y un cargo. Luego, fuera de todo, intenta llamar <code class="inline">formatear()</code> y observa qué pasa.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>La función interna se declara dentro del cuerpo de la externa, igual que cualquier <code class="inline">function</code>.</li>
+        <li>La interna puede usar los parámetros de la externa (<code class="inline">nombre</code>, <code class="inline">cargo</code>): los "hereda".</li>
+        <li>Al llamar <code class="inline">formatear()</code> afuera verás <code class="inline">ReferenceError</code>: la interna solo vive dentro de la externa.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><div class="dots"><span></span><span></span><span></span></div><span class="fname">reto-7.js — punto de partida</span></div>
+<pre class="code">// Define crearTarjeta(nombre, cargo) con una función interna formatear()
+
+
+// Prueba crearTarjeta con un nombre y un cargo
+
+
+// Intenta llamar formatear() afuera: ¿qué error sale?
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Ada Lovelace — Programadora
+⛔ ReferenceError: formatear is not defined</pre>
+      <p class="nota">El nombre y cargo son tuyos. La segunda línea (el error) confirma que entendiste el alcance de la función anidada.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add reto-7.js</code> → <code>git commit -m "feat: reto 7 - funcion anidada"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Misión cumplida!</span></label>
+  </section>
+
+  <!-- ============================================================
+       JEFE FINAL
+       ============================================================ -->
+  <div class="part-title">
+    <span class="pill" style="background:#5b21b6;">Jefe Final</span>
+    <h2>El integrador: lo juntas TODO</h2>
+  </div>
+
+  <!-- RETO FINAL -->
+  <section class="reto boss" id="rf">
+    <h3>🏆 Jefe Final · Boleta de la cafetería <span class="badge final">Integrador</span></h3>
+    <p class="lead">Aquí se combina TODO: definir varias funciones, parámetros, valor por defecto, <code class="inline">return</code> y funciones que se llaman entre sí. Funciones pequeñas, cada una con UNA tarea, trabajando en equipo. Eso es código limpio.</p>
+    <div class="mision">
+      <p>Vas a procesar la compra de una cafetería. Crea estas <strong>cuatro funciones</strong>:</p>
+      <ol>
+        <li><code class="inline">subtotal(precio, cantidad)</code> → devuelve <code class="inline">precio * cantidad</code>. La <strong>cantidad por defecto es 1</strong>.</li>
+        <li><code class="inline">aplicarIva(monto)</code> → devuelve el monto con un <strong>19% de IVA</strong> agregado.</li>
+        <li><code class="inline">aplicarDescuento(monto, porcentaje)</code> → resta ese porcentaje al monto. El <strong>porcentaje por defecto es 0</strong>.</li>
+        <li><code class="inline">generarBoleta(producto, precio, cantidad, descuento)</code> → la función <strong>orquestadora</strong>: usa las tres anteriores para calcular el total y devuelve un texto como <em>"Café x2 = $5.950"</em>.</li>
+      </ol>
+      <p><strong>Requisitos obligatorios:</strong> usa parámetros, al menos un valor por defecto, <code class="inline">return</code> en todas, y que <code class="inline">generarBoleta</code> <strong>invoque</strong> a las otras tres (no repitas cálculos). Prueba con <strong>al menos dos compras distintas</strong>, una de ellas con descuento.</p>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista? (están en orden, abre solo la que te falte)</summary>
+      <ul>
+        <li><strong>Subtotal:</strong> <code class="inline">function subtotal(precio, cantidad = 1) { return precio * cantidad; }</code>.</li>
+        <li><strong>IVA:</strong> agregar 19% es <code class="inline">monto + monto * 0.19</code> (o <code class="inline">monto * 1.19</code>).</li>
+        <li><strong>Descuento:</strong> restar un porcentaje es <code class="inline">monto - monto * (porcentaje / 100)</code>.</li>
+        <li><strong>Orquestar:</strong> dentro de <code class="inline">generarBoleta</code> primero calcula el <code class="inline">subtotal</code>, pásalo a <code class="inline">aplicarIva</code>, ese resultado a <code class="inline">aplicarDescuento</code>, y arma el texto final con <code class="inline">+</code>.</li>
+        <li><strong>Formato de pesos (opcional):</strong> <code class="inline">"$" + valor.toLocaleString("es-CL")</code> pone el separador de miles.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><div class="dots"><span></span><span></span><span></span></div><span class="fname">jefe-final.js — punto de partida</span></div>
+<pre class="code">// 1) subtotal(precio, cantidad = 1)
+
+
+// 2) aplicarIva(monto)
+
+
+// 3) aplicarDescuento(monto, porcentaje = 0)
+
+
+// 4) generarBoleta(producto, precio, cantidad, descuento)
+//    -> debe USAR las tres funciones de arriba
+
+
+// Prueba con dos compras distintas (una con descuento)
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Café x2 = $5.950
+Té x1 (10% dcto) = $1.927,8</pre>
+      <p class="nota">Ejemplo de referencia (cálculos exactos): un café de $2.500 x2 con IVA da <strong>5950</strong>. Un té de $1.800 con IVA (2142) y 10% de descuento da <strong>1927,8</strong>. El formato del texto lo decides tú —incluso puedes redondear con <code class="inline">Math.round</code>—; lo que importa es que las funciones colaboren y los cálculos cuadren.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add jefe-final.js</code> → <code>git commit -m "feat: jefe final - boleta cafeteria"</code> → <code>git push</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Venciste al Jefe Final? Márcalo</span><span class="txt-on">🏆 ¡JEFE FINAL DERROTADO!</span></label>
+  </section>
+
+  <!-- ============================================================
+       CHECKLIST DE ENTREGA
+       ============================================================ -->
+  <section class="checklist">
+    <h2>📦 Antes de entregar, revisa</h2>
+    <p>Marca cada punto. Si todos están ✅, estás listo para entregar.</p>
+    <label><input type="checkbox"> Mi carpeta tiene los <strong>8 archivos .js</strong> (reto-1 a reto-7 + jefe-final) y el <code class="inline">index.html</code>.</label>
+    <label><input type="checkbox"> Cada reto <strong>funciona</strong> y su salida coincide con la esperada.</label>
+    <label><input type="checkbox"> Tengo <strong>un commit por reto</strong> (revisa con <code class="inline">git log --oneline</code>), no uno solo al final.</label>
+    <label><input type="checkbox"> Subí todo a <strong>GitHub</strong> con <code class="inline">git push</code> y veo mis archivos en el repositorio.</label>
+    <label><input type="checkbox"> Publiqué en <strong>GitHub Pages</strong> y la página abre sin errores (resultados en la consola F12).</label>
+    <label><input type="checkbox"> Voy a entregar <strong>dos enlaces</strong>: el del repositorio y el de GitHub Pages.</label>
+  </section>
+
+  <p style="text-align:center; margin-top:48px;"><a class="back-top" href="#">↑ Volver al inicio</a></p>
+
+  <footer>
+    🎮 Actividad práctica — Módulo 4 · Lección 04 · Funciones<br>
+    Crea tus archivos, versiona con Git, sube a GitHub y publica en Pages.<br>
+    Basado en el material <strong>M4_L4_Funciones</strong>.
+  </footer>
+
+</div>
+
+<script>
+  /* ============================================================
+     Solo contador de progreso. La actividad NO se ejecuta aquí:
+     el alumno corre su código en su propio proyecto (Node o
+     Live Server) y lo versiona con Git.
+     ============================================================ */
+  (function () {
+    "use strict";
+    var checks = document.querySelectorAll('section.reto .done input[type="checkbox"]');
+    var contador = document.getElementById('contador');
+    function actualizar() {
+      var hechas = 0;
+      checks.forEach(function (c) { if (c.checked) hechas++; });
+      if (contador) contador.textContent = hechas;
+    }
+    checks.forEach(function (c) { c.addEventListener('change', actualizar); });
+    actualizar();
+  })();
+</script>
+</body>
+</html>
