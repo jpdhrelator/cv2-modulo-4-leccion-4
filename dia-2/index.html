@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Actividad integradora M4 L4 — Mini software en JavaScript: 'Ranking de Torneo Gamer'. El alumno construye una app por etapas usando TODO lo visto (funciones, parámetros, valor por defecto, return, arrow functions, map/filter/reduce, objetos), versiona con Git (un commit por etapa), sube a GitHub y publica en GitHub Pages. SIN soluciones: solo misión, pistas, punto de partida y salida esperada." />
+<title>🏆 Actividad integradora · M4 L4 · Mini software Torneo Gamer</title>
+<style>
+  :root {
+    --bg: #f5f7fb;
+    --paper: #ffffff;
+    --ink: #14223b;
+    --ink-soft: #4a5a76;
+    --brand: #2563eb;
+    --brand-2: #7c3aed;
+    --accent: #0ea5a4;
+    --warn: #b45309;
+    --warn-bg: #fff7ed;
+    --ok: #15803d;
+    --ok-bg: #f0fdf4;
+    --code-bg: #0f172a;
+    --code-ink: #e2e8f0;
+    --code-blue: #7dd3fc;
+    --border: #dbe3ee;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.7; font-size: 18px; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 32px 24px 96px; }
+
+  /* HERO */
+  header.hero {
+    background: linear-gradient(135deg, #0ea5a4, #2563eb);
+    color: #fff; border-radius: 20px; padding: 44px 40px; margin-bottom: 16px;
+  }
+  header.hero .kicker { text-transform: uppercase; letter-spacing: .2em; font-size: .8rem; opacity: .9; margin: 0 0 12px; }
+  header.hero h1 { margin: 0 0 12px; font-size: clamp(1.8rem, 4.5vw, 2.8rem); line-height: 1.1; }
+  header.hero p { margin: 0; font-size: 1.1rem; opacity: .95; max-width: 780px; }
+
+  /* REGLAS */
+  .rules { background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px 30px; margin-bottom: 16px; }
+  .rules h2 { margin: 0 0 12px; font-size: 1.2rem; }
+  .rules ol { margin: 0; padding-left: 22px; }
+  .rules li { margin: 8px 0; }
+  .rules .progress { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border); font-weight: 600; color: var(--brand-2); font-size: 1.05rem; }
+
+  /* SETUP */
+  .setup { background: linear-gradient(180deg, #ffffff, #eff6ff); border: 1px solid #bae6fd; border-left: 6px solid var(--brand); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 16px; }
+  .setup h2 { margin: 0 0 10px; font-size: 1.45rem; color: var(--ink); }
+  .setup > p { margin: 10px 0; }
+  .setup h3 { margin: 28px 0 8px; font-size: 1.1rem; color: var(--brand); display: flex; align-items: center; gap: 10px; }
+  .setup h3 .step { background: var(--brand); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: .9rem; flex-shrink: 0; }
+  .setup ol, .setup ul { padding-left: 24px; margin: 8px 0; }
+  .setup li { margin: 7px 0; }
+  .setup pre { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 10px 0; overflow-x: auto; font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; font-size: .88rem; line-height: 1.6; white-space: pre; }
+  .setup pre.tree { color: var(--code-blue); }
+  .setup .opt { background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 4px 18px 14px; margin: 12px 0; }
+  .setup .opt h4 { margin: 14px 0 6px; font-size: .98rem; color: var(--ink); }
+  .note-box { background: var(--warn-bg); border-left: 5px solid var(--warn); border-radius: 10px; padding: 12px 18px; margin: 14px 0; font-size: .92rem; }
+  .note-box::before { content: "⚠️ "; font-weight: 700; }
+  .git-box { background: #ecfeff; border-left: 5px solid var(--accent); border-radius: 10px; padding: 12px 18px; margin: 14px 0; font-size: .92rem; }
+  .git-box::before { content: "🔧 Git — "; font-weight: 700; color: var(--accent); }
+
+  /* TARJETA DE ETAPA */
+  section.reto { background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px 32px; margin-top: 26px; box-shadow: 0 1px 3px rgba(20,34,59,.04); transition: border-color .2s ease, box-shadow .2s ease; }
+  section.reto:has(.done input:checked) { border-color: var(--ok); box-shadow: 0 0 0 2px rgba(21,128,61,.18); }
+  section.reto h3 { margin: 0 0 6px; font-size: 1.35rem; color: var(--ink); }
+  section.reto .lead { color: var(--ink-soft); margin: 0 0 16px; }
+
+  .badge { display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:4px 10px; border-radius:999px; margin-left:10px; vertical-align:middle; }
+  .badge.b1{ background:#dcfce7; color:#166534; }
+  .badge.b2{ background:#fef9c3; color:#854d0e; }
+  .badge.b3{ background:#fee2e2; color:#991b1b; }
+  .badge.final{ background:#ede9fe; color:#5b21b6; }
+
+  .mision { background: #eff6ff; border-left: 5px solid var(--brand); border-radius: 10px; padding: 14px 22px 16px; margin: 16px 0; }
+  .mision::before { content: "🎯 Tu misión"; display:block; font-weight: 700; color: var(--brand); margin-bottom: 6px; }
+  .mision ol { margin: 6px 0 0; padding-left: 22px; }
+  .mision li { margin: 6px 0; }
+  .mision p { margin: 6px 0; }
+
+  details.hint { background: var(--warn-bg); border: 1px solid #fed7aa; border-radius: 10px; padding: 0 18px; margin: 16px 0; }
+  details.hint summary { cursor: pointer; font-weight: 700; color: var(--warn); padding: 13px 0; list-style: none; }
+  details.hint summary::-webkit-details-marker { display:none; }
+  details.hint summary::before { content: "💡 "; }
+  details.hint[open] summary { border-bottom: 1px dashed #fed7aa; }
+  details.hint ul { margin: 12px 0 16px; padding-left: 22px; }
+  details.hint li { margin: 7px 0; }
+
+  code.inline { background: #eef2f7; color: #b91c63; padding: 2px 7px; border-radius: 6px; font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; font-size: .9em; }
+
+  /* PUNTO DE PARTIDA (solo lectura, para copiar — sin estilo consola) */
+  .lab-head { display: flex; align-items: center; gap: 10px; background: #eef2f7; border-bottom: 1px solid var(--border); padding: 9px 16px; }
+  .lab-head .fname { color: var(--ink-soft); font-size: .82rem; font-weight: 600; font-family: "SF Mono", Menlo, monospace; }
+  .lab-head .fname::before { content: "📄 "; }
+  .starter { margin: 18px 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .starter pre.code { margin: 0; background: var(--code-bg); color: var(--code-ink); padding: 18px 20px; overflow-x: auto; font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; font-size: .95rem; line-height: 1.6; tab-size: 2; white-space: pre; }
+
+  /* RESULTADO ESPERADO */
+  .goal { background: #f5f3ff; border-left: 5px solid var(--brand-2); border-radius: 10px; padding: 14px 22px; margin: 16px 0; }
+  .goal::before { content: "✅ En la consola deberías ver algo así"; display:block; font-weight: 700; color: var(--brand-2); margin-bottom: 6px; }
+  .goal pre { margin: 6px 0 0; background: #ffffff; border: 1px solid #ddd6fe; border-radius: 8px; padding: 12px 14px; overflow-x: auto; font-family: "SF Mono", Menlo, monospace; font-size: .9rem; color: #4c1d95; line-height: 1.5; white-space: pre; }
+  .goal .nota { font-size: .82rem; color: var(--ink-soft); margin: 10px 0 0; }
+
+  /* CHECK */
+  label.done { display: inline-flex; align-items: center; gap: 9px; margin-top: 16px; font-weight: 600; color: var(--ink-soft); cursor: pointer; user-select: none; }
+  label.done input { width: 18px; height: 18px; accent-color: var(--ok); cursor: pointer; }
+  section.reto:has(.done input:checked) label.done { color: var(--ok); }
+  label.done .txt-on { display: none; }
+  section.reto:has(.done input:checked) label.done .txt-off { display: none; }
+  section.reto:has(.done input:checked) label.done .txt-on { display: inline; }
+
+  .commit-tip { margin: 14px 0 0; font-size: .86rem; color: var(--ink-soft); background: #f0fdfa; border: 1px dashed #99f6e4; border-radius: 8px; padding: 10px 14px; }
+  .commit-tip code { background:#ccfbf1; color:#0f766e; padding:2px 7px; border-radius:6px; font-family:"SF Mono", Menlo, monospace; font-size:.88em; }
+
+  /* TITULO DE PARTE */
+  .part-title { display: flex; align-items: center; gap: 14px; margin: 56px 0 8px; padding-bottom: 14px; border-bottom: 3px solid var(--brand-2); flex-wrap: wrap; }
+  .part-title .pill { background: var(--brand-2); color: #fff; font-size: .8rem; letter-spacing: .15em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px; }
+  .part-title h2 { margin: 0; font-size: 1.6rem; }
+
+  /* JEFE FINAL */
+  section.reto.boss { border: 2px solid var(--brand-2); background: linear-gradient(180deg, #ffffff, #faf5ff); }
+  section.reto.boss h3 { color: var(--brand-2); }
+
+  /* CHECKLIST */
+  .checklist { background: var(--ok-bg); border: 1px solid #bbf7d0; border-left: 6px solid var(--ok); border-radius: var(--radius); padding: 26px 30px; margin-top: 34px; }
+  .checklist h2 { margin: 0 0 6px; font-size: 1.35rem; color: var(--ink); }
+  .checklist > p { margin: 0 0 14px; color: var(--ink-soft); font-size: .95rem; }
+  .checklist label { display: flex; align-items: flex-start; gap: 11px; margin: 10px 0; cursor: pointer; }
+  .checklist input { width: 18px; height: 18px; margin-top: 4px; accent-color: var(--ok); cursor: pointer; flex-shrink: 0; }
+
+  footer { text-align: center; color: var(--ink-soft); font-size: .9rem; margin-top: 64px; }
+  a.back-top { color: var(--brand); text-decoration: none; font-size: .85rem; }
+
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .wrap { padding: 20px 14px 64px; }
+    section.reto { padding: 22px 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===================== HERO ===================== -->
+  <header class="hero">
+    <p class="kicker">Módulo 4 · Lección 04 · Actividad integradora</p>
+    <h1>🏆 Mini Software: Ranking de Torneo Gamer</h1>
+    <p>Vas a construir una <strong>app de verdad</strong> en JavaScript: un sistema que procesa los puntajes de un torneo de videojuegos. La construyes <strong>por etapas</strong> en un solo archivo <code style="color:#fff">torneo.js</code>, usando las <strong>arrow functions de muchas formas</strong>: como funciones utilitarias, para devolver objetos, como <strong>callback de tus propias funciones</strong> y con valor por defecto. Más <code style="color:#fff">return</code>, guard clauses y objetos. Versionas con <strong>Git (un commit por etapa)</strong>, subes a <strong>GitHub</strong> y publicas en <strong>GitHub Pages</strong>.</p>
+  </header>
+
+  <!-- ===================== REGLAS ===================== -->
+  <section class="rules">
+    <h2>📜 Cómo se juega</h2>
+    <ol>
+      <li>Primero <strong>arma tu proyecto</strong> (sección de abajo): carpeta, <code class="inline">torneo.js</code>, <code class="inline">index.html</code> y repositorio Git.</li>
+      <li>Resuelve las etapas <strong>en orden</strong>: cada una agrega una función al mismo <code class="inline">torneo.js</code> y usa las anteriores.</li>
+      <li>La misión dice QUÉ lograr, no CÓMO. Si te atascas, abre la <strong>💡 pista</strong>.</li>
+      <li>Pruébalo en tu computador (<strong>Node</strong> o <strong>Live Server</strong> + consola F12) y compara con la <strong>salida esperada</strong>.</li>
+      <li>Cuando una etapa funcione: <strong>haz un commit</strong>. Una etapa = un commit con mensaje claro.</li>
+      <li>Marca <strong>"Etapa cumplida"</strong> y mira subir tu progreso.</li>
+    </ol>
+    <p class="progress">🏅 Progreso: <span id="contador">0</span> / 8 etapas cumplidas</p>
+  </section>
+
+  <!-- ===================== SETUP ===================== -->
+  <div class="setup">
+    <h2>🚀 Arma y entrega tu proyecto</h2>
+    <p>Esta actividad <strong>no se ejecuta aquí</strong>. Creas tu propio proyecto, lo versionas con Git, lo subes a <strong>GitHub</strong> y lo publicas en <strong>GitHub Pages</strong>. Sigue estos 6 pasos:</p>
+
+    <h3><span class="step">1</span> Crea tu carpeta con esta estructura</h3>
+<pre class="tree">torneo-gamer/
+├── index.html     ← carga tu torneo.js
+├── README.md      ← describe tu proyecto (buena práctica)
+└── torneo.js      ← AQUÍ construyes todo, etapa por etapa</pre>
+
+    <h3><span class="step">2</span> Copia este index.html base</h3>
+    <p>Pégalo tal cual. Los resultados de los <code class="inline">console.log</code> se ven en la <strong>consola del navegador</strong> (tecla <code class="inline">F12</code> → pestaña <em>Console</em>).</p>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="es-CL"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Torneo Gamer&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Ranking de Torneo Gamer — abre la consola (F12)&lt;/h1&gt;
+  &lt;script src="torneo.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    <div class="note-box">Para probar: abre <code class="inline">index.html</code> con <strong>Live Server</strong> (clic derecho → <em>Open with Live Server</em>) y mira la consola (F12). Si tienes <strong>Node</strong>, también puedes correr <code class="inline">node torneo.js</code> en la terminal.</div>
+
+    <h3><span class="step">3</span> Inicializa Git</h3>
+    <p>Abre la terminal <strong>dentro</strong> de <code class="inline">torneo-gamer/</code>:</p>
+<pre>git init
+git add .
+git commit -m "chore: estructura inicial del proyecto"</pre>
+    <div class="git-box">vas a construir la app paso a paso y harás un commit por cada etapa que funcione. Tu historial debe contar la historia: "agregué total", "agregué ranking", "agregué medallas"... NO un solo commit gigante al final.</div>
+
+    <h3><span class="step">4</span> Construye y commitea etapa por etapa</h3>
+    <p>Agregas la función de la etapa a <code class="inline">torneo.js</code>, la pruebas y, cuando funciona, la versionas:</p>
+<pre>git add torneo.js
+git commit -m "feat: etapa 2 - puntaje total con reduce"</pre>
+    <p>Revisa tu avance con <code class="inline">git status</code> y <code class="inline">git log --oneline</code>.</p>
+
+    <h3><span class="step">5</span> Sube a GitHub</h3>
+    <div class="opt">
+      <h4>Opción A — Terminal (recomendada, refuerza Git)</h4>
+      <p>Crea un repositorio <strong>vacío</strong> en GitHub llamado <code class="inline">torneo-gamer</code>. Luego:</p>
+<pre>git branch -M main
+git remote add origin https://github.com/TU-USUARIO/torneo-gamer.git
+git push -u origin main</pre>
+      <p>Después de cada nuevo commit, súbelo con <code class="inline">git push</code>.</p>
+      <h4>Opción B — Web</h4>
+      <p>Crea el repo y arrastra los archivos. Funciona, pero pierdes la práctica de Git: úsala solo si la terminal te falla.</p>
+    </div>
+
+    <h3><span class="step">6</span> Publica en GitHub Pages</h3>
+    <ol>
+      <li>En tu repositorio: <strong>Settings</strong> → <strong>Pages</strong>.</li>
+      <li>En <em>Branch</em> elige <code class="inline">main</code> y carpeta <code class="inline">/ (root)</code>. Guarda.</li>
+      <li>Espera ~1 minuto y abre el enlace (<code class="inline">https://TU-USUARIO.github.io/torneo-gamer/</code>).</li>
+      <li>Abre la consola (F12): ahí corre tu mini software.</li>
+    </ol>
+    <div class="note-box">Entregas <strong>dos enlaces</strong>: el del repositorio (tu trabajo con Git) y el de GitHub Pages (que corre).</div>
+  </div>
+
+  <!-- ===================== DATOS BASE ===================== -->
+  <div class="part-title">
+    <span class="pill">Parte 1 · Cimientos</span>
+    <h2>Datos y funciones utilitarias (arrow)</h2>
+  </div>
+
+  <!-- ETAPA 1 -->
+  <section class="reto" id="e1">
+    <h3>Etapa 1 · Los jugadores del torneo <span class="badge b1">Nivel 1</span></h3>
+    <p class="lead">Todo software empieza por sus datos. Aquí tienes el dataset: cópialo tal cual al inicio de tu <code class="inline">torneo.js</code>.</p>
+    <div class="mision">
+      <ol>
+        <li>Copia el arreglo <code class="inline">jugadores</code> a tu archivo. Cada jugador es un <strong>objeto</strong> con nombre, país y un arreglo de <code class="inline">puntajes</code> (3 partidas).</li>
+        <li>Recórrelo e imprime una línea por jugador con su <strong>nombre</strong> y su <strong>país</strong>.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Para acceder a los datos de cada jugador: <code class="inline">jugador.nombre</code>, <code class="inline">jugador.pais</code>.</li>
+        <li>Puedes recorrer con un <code class="inline">for</code> clásico o con <code class="inline">forEach</code>. Usa un template literal <code class="inline">`...${j.nombre}...`</code>.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">torneo.js — punto de partida</span></div>
+<pre class="code">const jugadores = [
+  { nombre: "Aragorn", pais: "CL", puntajes: [120, 90, 150] },
+  { nombre: "Legolas", pais: "AR", puntajes: [200, 180, 220] },
+  { nombre: "Gimli",   pais: "CL", puntajes: [80, 60, 100] },
+  { nombre: "Gandalf", pais: "PE", puntajes: [300, 250, 290] },
+];
+
+// Recorre 'jugadores' e imprime el nombre y el país de cada uno.
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Aragorn (CL)
+Legolas (AR)
+Gimli (CL)
+Gandalf (PE)</pre>
+      <p class="nota">El formato del texto lo eliges tú; deben aparecer los 4 jugadores con su país.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add torneo.js</code> → <code>git commit -m "feat: etapa 1 - datos de jugadores"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ETAPA 2 -->
+  <section class="reto" id="e2">
+    <h3>Etapa 2 · Funciones utilitarias con arrow <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Tus primeras arrow functions: dos herramientas de cálculo cortitas, una apoyándose en la otra.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea una <strong>arrow function</strong> <code class="inline">puntajeTotal(jugador)</code> que devuelva la <strong>suma</strong> de sus puntajes. (Aquí sí conviene <code class="inline">reduce</code>, que ya conoces.)</li>
+        <li>Crea otra arrow <code class="inline">promedio(jugador)</code> que devuelva el promedio, <strong>reutilizando</strong> <code class="inline">puntajeTotal</code> (no vuelvas a sumar).</li>
+        <li>Muestra el total y el promedio de dos jugadores.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Arrow con return implícito: <code class="inline">const promedio = (j) =&gt; puntajeTotal(j) / j.puntajes.length;</code>.</li>
+        <li>Para sumar, <code class="inline">reduce((acc, p) =&gt; acc + p, 0)</code> sobre <code class="inline">jugador.puntajes</code>.</li>
+        <li>Fíjate cómo una arrow (<code class="inline">promedio</code>) usa a otra (<code class="inline">puntajeTotal</code>): funciones que colaboran.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">torneo.js — agrega debajo</span></div>
+<pre class="code">// const puntajeTotal = (jugador) => ...
+// const promedio = (jugador) => ...   (reutiliza puntajeTotal)
+
+
+// Prueba: muestra total y promedio de Aragorn y de Gandalf
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Aragorn: total 360, promedio 120
+Gandalf: total 840, promedio 280</pre>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add torneo.js</code> → <code>git commit -m "feat: etapa 2 - arrow utilitarias total y promedio"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ETAPA 3 -->
+  <section class="reto" id="e3">
+    <h3>Etapa 3 · Una arrow que devuelve un objeto <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">Otra forma de usar arrow: que su resultado sea un <strong>objeto</strong>. Cuidado, que aquí hay una trampa famosa.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">crearResumen(jugador)</code> que <strong>devuelva un objeto</strong> con tres propiedades: <code class="inline">nombre</code>, <code class="inline">total</code> y <code class="inline">promedio</code> (usando tus funciones de la etapa 2).</li>
+        <li>Hazlo con <strong>return implícito</strong> (sin escribir <code class="inline">return</code>).</li>
+        <li>Muestra el resumen de Gandalf.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>La trampa: <code class="inline">(j) =&gt; { nombre: j.nombre }</code> NO funciona (JS cree que <code class="inline">{}</code> es el cuerpo).</li>
+        <li>Envuelve el objeto en paréntesis para devolverlo: <code class="inline">(j) =&gt; ({ nombre: j.nombre, ... })</code>.</li>
+        <li>Las propiedades <code class="inline">total</code> y <code class="inline">promedio</code> salen de llamar a tus funciones anteriores.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">torneo.js — agrega debajo</span></div>
+<pre class="code">// const crearResumen = (jugador) => ({ ... });   // ¡ojo con los () !
+
+
+// Muestra el resumen de Gandalf
+</pre>
+    </div>
+    <div class="goal">
+      <pre>{ nombre: 'Gandalf', total: 840, promedio: 280 }</pre>
+      <p class="nota">Si te sale <code class="inline">undefined</code>, te faltaron los paréntesis envolviendo el objeto. Es el error N°1 con arrow.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add torneo.js</code> → <code>git commit -m "feat: etapa 3 - arrow que retorna objeto"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ===================== PARTE 2 ===================== -->
+  <div class="part-title">
+    <span class="pill">Parte 2 · Tus funciones reciben funciones</span>
+    <h2>Arrow como callback de TUS propias funciones</h2>
+  </div>
+
+  <!-- ETAPA 4 -->
+  <section class="reto" id="e4">
+    <h3>Etapa 4 · Tu propio "para cada jugador" <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">¿Recuerdas el <code class="inline">ejecutador</code> de la clase, que recibía una función y la ejecutaba? Vas a construir el tuyo. Una función que recibe <strong>otra función (una arrow) como argumento</strong>.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">paraCadaJugador(accion)</code> que reciba una función <code class="inline">accion</code> y la <strong>ejecute con cada jugador</strong> de la lista (recorre con un <code class="inline">for</code> por dentro).</li>
+        <li>Pruébala pasándole <strong>una arrow distinta cada vez</strong>: una que imprima solo el nombre, y otra que imprima nombre + país.</li>
+      </ol>
+      <p>Esto es lo mismo que hace <code class="inline">forEach</code> por dentro: ahora lo entiendes porque lo construiste tú.</p>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li><code class="inline">accion</code> es una función: dentro del <code class="inline">for</code> la ejecutas con <code class="inline">accion(jugadores[i])</code>.</li>
+        <li>Al usarla, le pasas la arrow en el momento: <code class="inline">paraCadaJugador((j) =&gt; console.log(j.nombre))</code>.</li>
+        <li>NO pongas paréntesis a la arrow cuando la pasas: pasas la función, no su resultado.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">torneo.js — agrega debajo</span></div>
+<pre class="code">// const paraCadaJugador = (accion) => {
+//   recorre 'jugadores' con un for y ejecuta accion(jugadores[i])
+// };
+
+
+// Pruébala con DOS arrow distintas:
+// 1) que imprima solo el nombre
+// 2) que imprima nombre + país
+</pre>
+    </div>
+    <div class="goal">
+      <pre>-- solo nombre --
+Aragorn
+Legolas
+Gimli
+Gandalf
+-- nombre y país --
+Aragorn - CL
+Legolas - AR
+Gimli - CL
+Gandalf - PE</pre>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add torneo.js</code> → <code>git commit -m "feat: etapa 4 - paraCadaJugador recibe una arrow"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ETAPA 5 -->
+  <section class="reto" id="e5">
+    <h3>Etapa 5 · Arrow como "condición" (predicado) <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">Ahora una arrow que devuelve <code class="inline">true</code> o <code class="inline">false</code>, y se la pasas a tu propia función para que decida. A eso se le llama <strong>predicado</strong>.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">contarJugadoresQue(condicion)</code> que reciba una arrow <code class="inline">condicion</code> (que devuelve true/false) y devuelva <strong>cuántos jugadores la cumplen</strong> (cuenta con un <code class="inline">for</code> por dentro, sin usar <code class="inline">filter</code>).</li>
+        <li>Pruébala con dos arrow-condición distintas: una que sea "su total es 400 o más" y otra que sea "su país es CL".</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Dentro del <code class="inline">for</code>: <code class="inline">if (condicion(jugadores[i])) cuenta++;</code>.</li>
+        <li>Las condiciones se pasan como arrow: <code class="inline">contarJugadoresQue((j) =&gt; puntajeTotal(j) &gt;= 400)</code>.</li>
+        <li>La otra: <code class="inline">(j) =&gt; j.pais === "CL"</code>. ¡Una arrow que devuelve un booleano!</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">torneo.js — agrega debajo</span></div>
+<pre class="code">// const contarJugadoresQue = (condicion) => {
+//   recorre con for, suma 1 cuando condicion(jugador) sea true, y retorna la cuenta
+// };
+
+
+// Prueba 1: cuántos tienen total >= 400
+// Prueba 2: cuántos son de país "CL"
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Con 400+ puntos: 2
+Del país CL: 2</pre>
+      <p class="nota">Total &gt;=400: Legolas y Gandalf. País CL: Aragorn y Gimli. La MISMA función responde preguntas distintas según la arrow que le pases.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add torneo.js</code> → <code>git commit -m "feat: etapa 5 - contarJugadoresQue con predicado"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ===================== PARTE 3 ===================== -->
+  <div class="part-title">
+    <span class="pill">Parte 3 · Decisiones</span>
+    <h2>Valor por defecto y guard clauses</h2>
+  </div>
+
+  <!-- ETAPA 6 -->
+  <section class="reto" id="e6">
+    <h3>Etapa 6 · Clasificar con valor por defecto <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Una arrow con cuerpo de varias líneas, un parámetro con <strong>valor por defecto</strong> y <code class="inline">return</code> temprano.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">clasificar(jugador, minimo)</code> que devuelva <code class="inline">"Clasificado"</code> si el total del jugador alcanza el mínimo, o <code class="inline">"Eliminado"</code> si no.</li>
+        <li>El parámetro <code class="inline">minimo</code> debe valer <strong>400 por defecto</strong>.</li>
+        <li>Prueba: Aragorn sin mínimo (usa 400), Gandalf sin mínimo, y Aragorn pasando 300.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Arrow con llaves y valor por defecto: <code class="inline">const clasificar = (jugador, minimo = 400) =&gt; { ... }</code>.</li>
+        <li>Con llaves, el <code class="inline">return</code> es obligatorio: <code class="inline">if (puntajeTotal(jugador) &gt;= minimo) return "Clasificado";</code>.</li>
+        <li>El valor por defecto entra solo cuando NO pasas el segundo argumento.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">torneo.js — agrega debajo</span></div>
+<pre class="code">// const clasificar = (jugador, minimo = 400) => { ... return ... };
+
+
+// Prueba: Aragorn (sin mínimo), Gandalf (sin mínimo), Aragorn con 300
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Aragorn: Eliminado
+Gandalf: Clasificado
+Aragorn (mínimo 300): Clasificado</pre>
+      <p class="nota">Aragorn tiene 360: con el mínimo por defecto (400) queda Eliminado, pero bajando el mínimo a 300, Clasifica.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add torneo.js</code> → <code>git commit -m "feat: etapa 6 - clasificar con valor por defecto"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ETAPA 7 -->
+  <section class="reto" id="e7">
+    <h3>Etapa 7 · Medalla por puntaje (guard clauses) <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Una arrow que toma una decisión con varios <code class="inline">return</code> en cadena, según el puntaje.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">medalla(total)</code> que devuelva: <code class="inline">"🥇 Oro"</code> si el total es 800 o más; <code class="inline">"🥈 Plata"</code> si es 500 o más; <code class="inline">"🥉 Bronce"</code> si es 300 o más; y <code class="inline">"Sin medalla"</code> en otro caso.</li>
+        <li>Usa <code class="inline">return</code> temprano (sin <code class="inline">else</code> anidados).</li>
+        <li>Usando tu <code class="inline">paraCadaJugador</code> de la etapa 4, imprime la medalla de cada jugador.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Encadena <code class="inline">if</code> con <code class="inline">return</code>: <code class="inline">if (total &gt;= 800) return "🥇 Oro";</code> y sigue bajando.</li>
+        <li>El orden importa: revisa de mayor a menor umbral.</li>
+        <li>Reutiliza la etapa 4: <code class="inline">paraCadaJugador((j) =&gt; console.log(... medalla(puntajeTotal(j)) ...))</code>.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">torneo.js — agrega debajo</span></div>
+<pre class="code">// const medalla = (total) => { ... varios if con return ... };
+
+
+// Con paraCadaJugador, imprime: nombre, total y medalla de cada uno
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Aragorn (360): 🥉 Bronce
+Legolas (600): 🥈 Plata
+Gimli (240): Sin medalla
+Gandalf (840): 🥇 Oro</pre>
+      <p class="nota">Lo importante es que cada medalla corresponda al total. Fíjate que aquí reutilizas DOS funciones tuyas: paraCadaJugador y puntajeTotal.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add torneo.js</code> → <code>git commit -m "feat: etapa 7 - medallas con guard clauses"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ===================== JEFE FINAL ===================== -->
+  <div class="part-title">
+    <span class="pill" style="background:#5b21b6;">Jefe Final</span>
+    <h2>El reporte que junta TODO</h2>
+  </div>
+
+  <!-- ETAPA FINAL -->
+  <section class="reto boss" id="ef">
+    <h3>🏆 Jefe Final · El reporte del torneo <span class="badge final">Integrador</span></h3>
+    <p class="lead">La función que coordina a todas las demás. Aquí demuestras que tus funciones colaboran como un equipo: una sola llamada genera el informe completo.</p>
+    <div class="mision">
+      <p>Crea una arrow <code class="inline">reporteTorneo</code> que, usando las funciones que ya creaste, imprima un informe completo con TODO esto:</p>
+      <ol>
+        <li>Un título del torneo.</li>
+        <li>Una línea por jugador (recórrelos con tu <code class="inline">paraCadaJugador</code> de la etapa 4) que muestre: nombre, total, promedio, su medalla y si está Clasificado o Eliminado.</li>
+        <li>Al final, las estadísticas: cuántos clasifican a la final y cuántos son del país <code class="inline">"CL"</code> (usa tu <code class="inline">contarJugadoresQue</code> de la etapa 5).</li>
+      </ol>
+      <p><strong>Requisitos:</strong> <code class="inline">reporteTorneo</code> NO debe repetir cálculos; debe <strong>invocar</strong> a las funciones de las etapas anteriores. Llámala una sola vez al final del archivo.</p>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Es una arrow "orquestadora": adentro usa <code class="inline">paraCadaJugador</code>, <code class="inline">puntajeTotal</code>, <code class="inline">promedio</code>, <code class="inline">medalla</code>, <code class="inline">clasificar</code> y <code class="inline">contarJugadoresQue</code>.</li>
+        <li>Para la línea de cada jugador: <code class="inline">paraCadaJugador((j) =&gt; console.log(\`${j.nombre}: ...\`))</code> combinando varias de tus funciones.</li>
+        <li>Para las estadísticas: <code class="inline">contarJugadoresQue((j) =&gt; puntajeTotal(j) &gt;= 400)</code> y <code class="inline">contarJugadoresQue((j) =&gt; j.pais === "CL")</code>.</li>
+        <li>No necesitas nada nuevo: TODO ya lo construiste. Esta etapa solo lo conecta.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">torneo.js — cierre del archivo</span></div>
+<pre class="code">// const reporteTorneo = () => {
+//   imprime el título
+//   paraCadaJugador((j) => ... nombre, total, promedio, medalla, clasificar ...)
+//   imprime estadísticas con contarJugadoresQue(...)
+// };
+
+
+// reporteTorneo();   // una sola llamada genera todo el informe
+</pre>
+    </div>
+    <div class="goal">
+      <pre>===== TORNEO GAMER 2026 =====
+
+-- JUGADORES --
+Aragorn: 360 pts (prom 120) → 🥉 Bronce → Eliminado
+Legolas: 600 pts (prom 200) → 🥈 Plata → Clasificado
+Gimli: 240 pts (prom 80) → Sin medalla → Eliminado
+Gandalf: 840 pts (prom 280) → 🥇 Oro → Clasificado
+
+-- ESTADÍSTICAS --
+Clasificados a la final: 2
+Jugadores de CL: 2</pre>
+      <p class="nota">El diseño del informe (títulos, separadores, orden) es tu decisión de "producto". Lo que importa: que cada dato salga de una función distinta y que <code class="inline">reporteTorneo</code> las coordine como un equipo.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add torneo.js</code> → <code>git commit -m "feat: jefe final - reporte del torneo"</code> → <code>git push</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Venciste al Jefe Final? Márcalo</span><span class="txt-on">🏆 ¡JEFE FINAL DERROTADO!</span></label>
+  </section>
+
+  <!-- ===================== CHECKLIST ===================== -->
+  <section class="checklist">
+    <h2>📦 Antes de entregar, revisa</h2>
+    <p>Marca cada punto. Si todos están ✅, estás listo para entregar.</p>
+    <label><input type="checkbox"> Mi <code class="inline">torneo.js</code> tiene las <strong>8 etapas</strong> (datos + 6 funciones + reporte final) y funciona completo.</label>
+    <label><input type="checkbox"> Cada función <strong>reutiliza</strong> a las anteriores (no repito el mismo cálculo en varios lados).</label>
+    <label><input type="checkbox"> Usé <strong>arrow functions de varias formas</strong>: utilitarias, una que <strong>retorna un objeto</strong>, y como <strong>callback de mis propias funciones</strong> (no solo de arreglos).</label>
+    <label><input type="checkbox"> Usé un <strong>valor por defecto</strong> y <strong>guard clauses</strong> (return temprano).</label>
+    <label><input type="checkbox"> Tengo <strong>un commit por etapa</strong> (revisa con <code class="inline">git log --oneline</code>), no uno solo al final.</label>
+    <label><input type="checkbox"> Subí todo a <strong>GitHub</strong> con <code class="inline">git push</code> y veo mis archivos en el repositorio.</label>
+    <label><input type="checkbox"> Publiqué en <strong>GitHub Pages</strong> y el reporte aparece en la consola (F12) sin errores.</label>
+    <label><input type="checkbox"> Voy a entregar <strong>dos enlaces</strong>: el del repositorio y el de GitHub Pages.</label>
+  </section>
+
+  <p style="text-align:center; margin-top:48px;"><a class="back-top" href="#">↑ Volver al inicio</a></p>
+
+  <footer>
+    🏆 Actividad integradora — Módulo 4 · Lección 04 · Mini software en JavaScript<br>
+    Construye por etapas, versiona con Git, sube a GitHub y publica en Pages.<br>
+    Usa TODO lo aprendido: funciones, arrow, map/filter/reduce y trabajo en equipo de funciones.
+  </footer>
+
+</div>
+
+<script>
+  /* Solo contador de progreso. La actividad NO se ejecuta aquí:
+     el alumno construye su mini software en su propio proyecto y lo versiona con Git. */
+  (function () {
+    "use strict";
+    var checks = document.querySelectorAll('section.reto .done input[type="checkbox"]');
+    var contador = document.getElementById('contador');
+    function actualizar() {
+      var hechas = 0;
+      checks.forEach(function (c) { if (c.checked) hechas++; });
+      if (contador) contador.textContent = hechas;
+    }
+    checks.forEach(function (c) { c.addEventListener('change', actualizar); });
+    actualizar();
+  })();
+</script>
+</body>
+</html>
