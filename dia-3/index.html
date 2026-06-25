@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Actividad integradora M4 L4 — Mini sistema 'Mi Catálogo de Películas' con menú do/while. El alumno construye la app por etapas usando funciones, arrow, arreglo de objetos, find, filter, reduce y cambio de estado; versiona con Git (un commit por etapa), sube a GitHub y publica en GitHub Pages. SIN soluciones." />
+<title>🎬 Actividad · M4 L4 · Mi Catálogo de Películas</title>
+<style>
+  :root {
+    --bg:#f5f7fb; --paper:#ffffff; --ink:#14223b; --ink-soft:#4a5a76;
+    --brand:#2563eb; --brand-2:#7c3aed; --accent:#0ea5a4; --warn:#b45309;
+    --warn-bg:#fff7ed; --ok:#15803d; --ok-bg:#f0fdf4;
+    --code-bg:#0f172a; --code-ink:#e2e8f0; --code-blue:#7dd3fc; --border:#dbe3ee; --radius:14px;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.7; font-size:18px; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 96px; }
+
+  header.hero { background:linear-gradient(135deg,#7c3aed,#db2777); color:#fff; border-radius:20px; padding:44px 40px; margin-bottom:16px; }
+  header.hero .kicker { text-transform:uppercase; letter-spacing:.2em; font-size:.8rem; opacity:.9; margin:0 0 12px; }
+  header.hero h1 { margin:0 0 12px; font-size:clamp(1.8rem,4.5vw,2.8rem); line-height:1.1; }
+  header.hero p { margin:0; font-size:1.1rem; opacity:.95; max-width:780px; }
+
+  .rules { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:26px 30px; margin-bottom:16px; }
+  .rules h2 { margin:0 0 12px; font-size:1.2rem; }
+  .rules ol { margin:0; padding-left:22px; }
+  .rules li { margin:8px 0; }
+  .rules .progress { margin-top:18px; padding-top:16px; border-top:1px dashed var(--border); font-weight:600; color:var(--brand-2); font-size:1.05rem; }
+
+  .setup { background:linear-gradient(180deg,#ffffff,#faf5ff); border:1px solid #e9d5ff; border-left:6px solid var(--brand-2); border-radius:var(--radius); padding:28px 32px; margin-bottom:16px; }
+  .setup h2 { margin:0 0 10px; font-size:1.45rem; color:var(--ink); }
+  .setup > p { margin:10px 0; }
+  .setup h3 { margin:28px 0 8px; font-size:1.1rem; color:var(--brand-2); display:flex; align-items:center; gap:10px; }
+  .setup h3 .step { background:var(--brand-2); color:#fff; width:28px; height:28px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.9rem; flex-shrink:0; }
+  .setup ol, .setup ul { padding-left:24px; margin:8px 0; }
+  .setup li { margin:7px 0; }
+  .setup pre { background:var(--code-bg); color:var(--code-ink); border-radius:10px; padding:16px 18px; margin:10px 0; overflow-x:auto; font-family:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace; font-size:.88rem; line-height:1.6; white-space:pre; }
+  .setup pre.tree { color:var(--code-blue); }
+  .setup .opt { background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:4px 18px 14px; margin:12px 0; }
+  .setup .opt h4 { margin:14px 0 6px; font-size:.98rem; color:var(--ink); }
+  .note-box { background:var(--warn-bg); border-left:5px solid var(--warn); border-radius:10px; padding:12px 18px; margin:14px 0; font-size:.92rem; }
+  .note-box::before { content:"⚠️ "; font-weight:700; }
+  .git-box { background:#ecfeff; border-left:5px solid var(--accent); border-radius:10px; padding:12px 18px; margin:14px 0; font-size:.92rem; }
+  .git-box::before { content:"🔧 Git — "; font-weight:700; color:var(--accent); }
+
+  section.reto { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:30px 32px; margin-top:26px; box-shadow:0 1px 3px rgba(20,34,59,.04); transition:border-color .2s ease, box-shadow .2s ease; }
+  section.reto:has(.done input:checked) { border-color:var(--ok); box-shadow:0 0 0 2px rgba(21,128,61,.18); }
+  section.reto h3 { margin:0 0 6px; font-size:1.35rem; color:var(--ink); }
+  section.reto .lead { color:var(--ink-soft); margin:0 0 16px; }
+
+  .badge { display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:4px 10px; border-radius:999px; margin-left:10px; vertical-align:middle; }
+  .badge.b1{ background:#dcfce7; color:#166534; }
+  .badge.b2{ background:#fef9c3; color:#854d0e; }
+  .badge.b3{ background:#fee2e2; color:#991b1b; }
+  .badge.final{ background:#ede9fe; color:#5b21b6; }
+
+  .mision { background:#eff6ff; border-left:5px solid var(--brand); border-radius:10px; padding:14px 22px 16px; margin:16px 0; }
+  .mision::before { content:"🎯 Tu misión"; display:block; font-weight:700; color:var(--brand); margin-bottom:6px; }
+  .mision ol { margin:6px 0 0; padding-left:22px; }
+  .mision li { margin:6px 0; }
+  .mision p { margin:6px 0; }
+
+  details.hint { background:var(--warn-bg); border:1px solid #fed7aa; border-radius:10px; padding:0 18px; margin:16px 0; }
+  details.hint summary { cursor:pointer; font-weight:700; color:var(--warn); padding:13px 0; list-style:none; }
+  details.hint summary::-webkit-details-marker { display:none; }
+  details.hint summary::before { content:"💡 "; }
+  details.hint[open] summary { border-bottom:1px dashed #fed7aa; }
+  details.hint ul { margin:12px 0 16px; padding-left:22px; }
+  details.hint li { margin:7px 0; }
+
+  code.inline { background:#eef2f7; color:#b91c63; padding:2px 7px; border-radius:6px; font-family:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace; font-size:.9em; }
+
+  .lab-head { display:flex; align-items:center; gap:10px; background:#eef2f7; border-bottom:1px solid var(--border); padding:9px 16px; }
+  .lab-head .fname { color:var(--ink-soft); font-size:.82rem; font-weight:600; font-family:"SF Mono",Menlo,monospace; }
+  .lab-head .fname::before { content:"📄 "; }
+  .starter { margin:18px 0; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  .starter pre.code { margin:0; background:var(--code-bg); color:var(--code-ink); padding:18px 20px; overflow-x:auto; font-family:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace; font-size:.95rem; line-height:1.6; tab-size:2; white-space:pre; }
+
+  .goal { background:#f5f3ff; border-left:5px solid var(--brand-2); border-radius:10px; padding:14px 22px; margin:16px 0; }
+  .goal::before { content:"✅ Deberías ver algo así"; display:block; font-weight:700; color:var(--brand-2); margin-bottom:6px; }
+  .goal pre { margin:6px 0 0; background:#ffffff; border:1px solid #ddd6fe; border-radius:8px; padding:12px 14px; overflow-x:auto; font-family:"SF Mono",Menlo,monospace; font-size:.9rem; color:#4c1d95; line-height:1.5; white-space:pre; }
+  .goal .nota { font-size:.82rem; color:var(--ink-soft); margin:10px 0 0; }
+
+  label.done { display:inline-flex; align-items:center; gap:9px; margin-top:16px; font-weight:600; color:var(--ink-soft); cursor:pointer; user-select:none; }
+  label.done input { width:18px; height:18px; accent-color:var(--ok); cursor:pointer; }
+  section.reto:has(.done input:checked) label.done { color:var(--ok); }
+  label.done .txt-on { display:none; }
+  section.reto:has(.done input:checked) label.done .txt-off { display:none; }
+  section.reto:has(.done input:checked) label.done .txt-on { display:inline; }
+
+  .commit-tip { margin:14px 0 0; font-size:.86rem; color:var(--ink-soft); background:#f0fdfa; border:1px dashed #99f6e4; border-radius:8px; padding:10px 14px; }
+  .commit-tip code { background:#ccfbf1; color:#0f766e; padding:2px 7px; border-radius:6px; font-family:"SF Mono",Menlo,monospace; font-size:.88em; }
+
+  .part-title { display:flex; align-items:center; gap:14px; margin:56px 0 8px; padding-bottom:14px; border-bottom:3px solid var(--brand-2); flex-wrap:wrap; }
+  .part-title .pill { background:var(--brand-2); color:#fff; font-size:.8rem; letter-spacing:.15em; text-transform:uppercase; padding:6px 14px; border-radius:999px; }
+  .part-title h2 { margin:0; font-size:1.6rem; }
+
+  section.reto.boss { border:2px solid var(--brand-2); background:linear-gradient(180deg,#ffffff,#faf5ff); }
+  section.reto.boss h3 { color:var(--brand-2); }
+
+  .checklist { background:var(--ok-bg); border:1px solid #bbf7d0; border-left:6px solid var(--ok); border-radius:var(--radius); padding:26px 30px; margin-top:34px; }
+  .checklist h2 { margin:0 0 6px; font-size:1.35rem; color:var(--ink); }
+  .checklist > p { margin:0 0 14px; color:var(--ink-soft); font-size:.95rem; }
+  .checklist label { display:flex; align-items:flex-start; gap:11px; margin:10px 0; cursor:pointer; }
+  .checklist input { width:18px; height:18px; margin-top:4px; accent-color:var(--ok); cursor:pointer; flex-shrink:0; }
+
+  footer { text-align:center; color:var(--ink-soft); font-size:.9rem; margin-top:64px; }
+  a.back-top { color:var(--brand); text-decoration:none; font-size:.85rem; }
+
+  @media (max-width:640px){ body{font-size:16px;} .wrap{padding:20px 14px 64px;} section.reto{padding:22px 18px;} }
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">Módulo 4 · Lección 04 · Actividad integradora</p>
+    <h1>🎬 Mi Catálogo de Películas</h1>
+    <p>Construye tu propio sistema tipo "mini Netflix": un programa con <strong>menú <code style="color:#fff">do/while</code></strong> para gestionar tu catálogo de pelis. Lo armas <strong>por etapas</strong> en un archivo <code style="color:#fff">catalogo.js</code>, aplicando TODO lo visto: funciones arrow, arreglo de objetos, <code style="color:#fff">find</code>, <code style="color:#fff">filter</code>, <code style="color:#fff">reduce</code>, cambio de estado y validaciones. Versionas con <strong>Git (un commit por etapa)</strong>, subes a <strong>GitHub</strong> y publicas en <strong>GitHub Pages</strong>. Esto NO es ningún sistema que hicimos en clase: te toca aplicar las herramientas a algo nuevo.</p>
+  </header>
+
+  <section class="rules">
+    <h2>📜 Cómo se juega</h2>
+    <ol>
+      <li>Primero <strong>arma tu proyecto</strong> (sección de abajo): carpeta, <code class="inline">catalogo.js</code>, <code class="inline">index.html</code> y repositorio Git.</li>
+      <li>Resuelve las etapas <strong>en orden</strong>: cada una agrega una función al mismo <code class="inline">catalogo.js</code>.</li>
+      <li>La misión dice QUÉ lograr, no CÓMO. Si te atascas, abre la <strong>💡 pista</strong>.</li>
+      <li>Prueba cada función con <code class="inline">console.log</code> en tu computador (Node o Live Server + consola F12) y compara con la <strong>salida esperada</strong>.</li>
+      <li>Cuando una etapa funcione: <strong>haz un commit</strong>. Una etapa = un commit.</li>
+      <li>Marca <strong>"Etapa cumplida"</strong> y mira subir tu progreso.</li>
+    </ol>
+    <p class="progress">🏅 Progreso: <span id="contador">0</span> / 7 etapas cumplidas</p>
+  </section>
+
+  <div class="setup">
+    <h2>🚀 Arma y entrega tu proyecto</h2>
+    <p>Esta actividad <strong>no se ejecuta aquí</strong>. Creas tu proyecto, lo versionas con Git, lo subes a <strong>GitHub</strong> y lo publicas en <strong>GitHub Pages</strong>.</p>
+
+    <h3><span class="step">1</span> Crea tu carpeta</h3>
+<pre class="tree">catalogo-peliculas/
+├── index.html     ← carga tu catalogo.js
+├── README.md      ← describe tu proyecto
+└── catalogo.js    ← AQUÍ construyes todo, etapa por etapa</pre>
+
+    <h3><span class="step">2</span> Copia este index.html base</h3>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="es-CL"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Mi Catálogo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Mi Catálogo de Películas — abre la consola (F12)&lt;/h1&gt;
+  &lt;script src="catalogo.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    <div class="note-box">Para probar: abre <code class="inline">index.html</code> con <strong>Live Server</strong> y mira la consola (F12). Si tienes <strong>Node</strong>, corre <code class="inline">node catalogo.js</code> en la terminal.</div>
+
+    <h3><span class="step">3</span> Inicializa Git y commitea por etapa</h3>
+<pre>git init
+git add .
+git commit -m "chore: estructura inicial del proyecto"</pre>
+    <div class="git-box">cada etapa que funcione = un commit con mensaje claro (<code class="inline">feat: ...</code>). NO dejes todo para un commit gigante al final. Revisa tu historial con <code class="inline">git log --oneline</code>.</div>
+
+    <h3><span class="step">4</span> Sube a GitHub y publica en Pages</h3>
+    <div class="opt">
+      <h4>Subir (terminal, recomendado)</h4>
+<pre>git branch -M main
+git remote add origin https://github.com/TU-USUARIO/catalogo-peliculas.git
+git push -u origin main</pre>
+      <h4>Publicar</h4>
+      <p>En tu repo: <strong>Settings → Pages</strong>, elige rama <code class="inline">main</code> y carpeta <code class="inline">/ (root)</code>. Abre el enlace y revisa la consola (F12).</p>
+    </div>
+    <div class="note-box">Entregas <strong>dos enlaces</strong>: el del repositorio y el de GitHub Pages.</div>
+  </div>
+
+  <!-- ===================== PARTE 1 ===================== -->
+  <div class="part-title"><span class="pill">Parte 1 · Las funciones</span><h2>Construye el motor de tu catálogo</h2></div>
+
+  <!-- E1 -->
+  <section class="reto" id="e1">
+    <h3>Etapa 1 · El catálogo inicial <span class="badge b1">Nivel 1</span></h3>
+    <p class="lead">Empieza por los datos. Copia el arreglo de películas y aprende a recorrerlo.</p>
+    <div class="mision">
+      <ol>
+        <li>Copia el arreglo <code class="inline">peliculas</code> al inicio de tu <code class="inline">catalogo.js</code>. Cada película es un <strong>objeto</strong> con título, género, duración (en minutos) y <code class="inline">vista</code> (si ya la viste o no).</li>
+        <li>Recórrelo con <code class="inline">forEach</code> e imprime una línea por película con su <strong>número, título, género y duración</strong>.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li><code class="inline">peliculas.forEach((p, i) =&gt; console.log(...))</code> — el segundo parámetro <code class="inline">i</code> es el índice.</li>
+        <li>Recuerda mostrar <code class="inline">i + 1</code> para numerar desde 1.</li>
+        <li>Arma el texto con un template literal o con <code class="inline">+</code>: <code class="inline">p.titulo</code>, <code class="inline">p.genero</code>, <code class="inline">p.duracion</code>.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">catalogo.js — punto de partida</span></div>
+<pre class="code">const peliculas = [
+  { titulo: "Matrix",    genero: "Acción",    duracion: 136, vista: false },
+  { titulo: "Coco",      genero: "Animación", duracion: 105, vista: false },
+  { titulo: "Inception", genero: "Acción",    duracion: 148, vista: false },
+];
+
+// Recorre 'peliculas' con forEach e imprime nº, título, género y duración.
+</pre>
+    </div>
+    <div class="goal">
+      <pre>1. Matrix (Acción, 136 min)
+2. Coco (Animación, 105 min)
+3. Inception (Acción, 148 min)</pre>
+      <p class="nota">El formato exacto lo eliges tú; deben aparecer las 3 películas con sus datos.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add catalogo.js</code> → <code>git commit -m "feat: etapa 1 - catalogo inicial"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E2 -->
+  <section class="reto" id="e2">
+    <h3>Etapa 2 · Agregar películas <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Una arrow function que mete una película nueva al catálogo, marcada como NO vista.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">agregar(titulo, genero, duracion)</code> que cree un objeto película y lo meta al arreglo con <code class="inline">push</code>.</li>
+        <li>La película nueva siempre entra con <code class="inline">vista: false</code> (todavía no la has visto).</li>
+        <li>Agrega <em>"Toy Story"</em> (Animación, 81 min) y muestra cuántas películas hay ahora.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li><code class="inline">peliculas.push({ titulo, genero, duracion, vista: false })</code>.</li>
+        <li>Para contar: <code class="inline">peliculas.length</code>.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">catalogo.js — agrega debajo</span></div>
+<pre class="code">// const agregar = (titulo, genero, duracion) => { ... push con vista: false ... };
+
+
+// Agrega "Toy Story" (Animación, 81) y muestra peliculas.length
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Total de películas: 4</pre>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add catalogo.js</code> → <code>git commit -m "feat: etapa 2 - agregar pelicula"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E3 -->
+  <section class="reto" id="e3">
+    <h3>Etapa 3 · Marcar como vista (find + cambiar estado) <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">Buscar una película por su título y cambiar su estado a vista. Con validación si no existe.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">marcarVista(titulo)</code> que <strong>busque</strong> la película por su título y ponga su <code class="inline">vista</code> en <code class="inline">true</code>.</li>
+        <li>Si NO existe una película con ese título, avisa con un mensaje y no hagas nada más (<strong>guard clause</strong>).</li>
+        <li>Prueba marcando <em>"Matrix"</em> (existe) y <em>"Avatar"</em> (no existe).</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Para buscar UNO: <code class="inline">peliculas.find((p) =&gt; p.titulo === titulo)</code>.</li>
+        <li><code class="inline">find</code> devuelve la película encontrada o <code class="inline">undefined</code> si no hay. Valida con <code class="inline">if (!peli) { ...; return; }</code>.</li>
+        <li>Cambiar el estado: <code class="inline">peli.vista = true</code> (modificas la propiedad del objeto encontrado).</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">catalogo.js — agrega debajo</span></div>
+<pre class="code">// const marcarVista = (titulo) => { ... find + validación + cambiar vista ... };
+
+
+// Prueba: marcarVista("Matrix")  y  marcarVista("Avatar")
+</pre>
+    </div>
+    <div class="goal">
+      <pre>✅ Marcada como vista: Matrix
+❌ No existe: Avatar</pre>
+      <p class="nota">Los textos los eliges tú. Lo clave: que encuentre y cambie el estado, y que valide la que no existe.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add catalogo.js</code> → <code>git commit -m "feat: etapa 3 - marcar vista con find"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E4 -->
+  <section class="reto" id="e4">
+    <h3>Etapa 4 · Filtrar por género <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Devolver solo las películas de un género dado. Trabajo para <code class="inline">filter</code>.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">porGenero(genero)</code> que devuelva un arreglo con las películas de ese género.</li>
+        <li>Pruébala con <em>"Acción"</em> y muestra los títulos encontrados.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li><code class="inline">peliculas.filter((p) =&gt; p.genero === genero)</code>.</li>
+        <li>Para mostrar solo títulos: <code class="inline">.map((p) =&gt; p.titulo)</code> sobre el resultado.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">catalogo.js — agrega debajo</span></div>
+<pre class="code">// const porGenero = (genero) => peliculas.filter(...);
+
+
+// Prueba: muestra los títulos de las películas de "Acción"
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Acción: [ "Matrix", "Inception" ]</pre>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add catalogo.js</code> → <code>git commit -m "feat: etapa 4 - filtrar por genero"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E5 -->
+  <section class="reto" id="e5">
+    <h3>Etapa 5 · Recomendar las no vistas <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Otro <code class="inline">filter</code>, pero ahora por una condición booleana: las que todavía NO has visto.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">recomendar()</code> que devuelva las películas cuyo <code class="inline">vista</code> sea <code class="inline">false</code>.</li>
+        <li>Marca primero <em>"Matrix"</em> como vista (etapa 3) y luego muestra los títulos recomendados.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Las no vistas: <code class="inline">peliculas.filter((p) =&gt; !p.vista)</code> — el <code class="inline">!</code> invierte el booleano.</li>
+        <li>Si ya marcaste "Matrix", no debería aparecer en la lista de recomendadas.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">catalogo.js — agrega debajo</span></div>
+<pre class="code">// const recomendar = () => peliculas.filter(...);
+
+
+// Marca "Matrix" como vista y luego muestra los títulos recomendados
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Te recomendamos: [ "Coco", "Inception" ]</pre>
+      <p class="nota">"Matrix" no aparece porque ya la marcaste como vista. (Si agregaste "Toy Story" en la etapa 2, también saldrá recomendada.)</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add catalogo.js</code> → <code>git commit -m "feat: etapa 5 - recomendar no vistas"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E6 -->
+  <section class="reto" id="e6">
+    <h3>Etapa 6 · Tiempo total visto (filter + reduce) <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">¿Cuántos minutos llevas viendo pelis? Combina <code class="inline">filter</code> (solo las vistas) con <code class="inline">reduce</code> (sumar duraciones).</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">tiempoTotalVisto()</code> que sume la <code class="inline">duracion</code> de <strong>solo las películas vistas</strong>.</li>
+        <li>Marca <em>"Matrix"</em> e <em>"Inception"</em> como vistas y muestra el total de minutos.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Primero filtra las vistas, luego suma: <code class="inline">peliculas.filter((p) =&gt; p.vista).reduce((acc, p) =&gt; acc + p.duracion, 0)</code>.</li>
+        <li>Puedes encadenar <code class="inline">filter</code> y <code class="inline">reduce</code> en una sola línea.</li>
+        <li>Matrix (136) + Inception (148) = el total que debes obtener.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">catalogo.js — agrega debajo</span></div>
+<pre class="code">// const tiempoTotalVisto = () => peliculas.filter(...).reduce(...);
+
+
+// Marca "Matrix" e "Inception" como vistas y muestra el total de minutos
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Tiempo total visto: 284 min</pre>
+      <p class="nota">136 + 148 = 284. Si marcaste otras películas como vistas, el total cambiará: lo importante es que sume SOLO las vistas.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add catalogo.js</code> → <code>git commit -m "feat: etapa 6 - tiempo total visto"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ===================== JEFE FINAL ===================== -->
+  <div class="part-title"><span class="pill" style="background:#5b21b6;">Jefe Final</span><h2>El menú que junta TODO</h2></div>
+
+  <section class="reto boss" id="ef">
+    <h3>🏆 Jefe Final · El menú do/while <span class="badge final">Integrador</span></h3>
+    <p class="lead">Hasta ahora tienes funciones sueltas. Ahora construye el <strong>menú interactivo</strong> que las usa todas, como un programa real.</p>
+    <div class="mision">
+      <p>Arma un menú con <code class="inline">do/while</code> que muestre las opciones y, según lo que elija el usuario, llame a tus funciones. El menú se repite hasta que elija <strong>Salir</strong>. Opciones mínimas:</p>
+      <ol>
+        <li><strong>Agregar</strong> película (pide título, género y duración).</li>
+        <li><strong>Ver todas</strong> (con una marca <code class="inline">[✓]</code> / <code class="inline">[ ]</code> según si está vista).</li>
+        <li><strong>Marcar como vista</strong> (pide el título).</li>
+        <li><strong>Filtrar por género</strong> (pide el género).</li>
+        <li><strong>Recomendar</strong> (muestra las no vistas).</li>
+        <li><strong>Tiempo total visto</strong>.</li>
+        <li><strong>Salir</strong>.</li>
+      </ol>
+      <p><strong>Requisito:</strong> el menú NO repite lógica; solo <strong>invoca</strong> las funciones que ya creaste. Para leer la opción usa <code class="inline">prompt()</code> (o la función <code class="inline">pedir()</code> simulada que viste en clase para probar sin ventanitas).</p>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Estructura: <code class="inline">let opcion; do { ...muestra menú; opcion = prompt("Opción:"); if/else if... } while (opcion !== "7");</code>.</li>
+        <li>Usa <code class="inline">do/while</code> (no <code class="inline">while</code>) para que el menú aparezca al menos una vez.</li>
+        <li>Para probar sin ventanitas, copia el patrón <code class="inline">pedir()</code> con entradas simuladas que usamos en clase y, en tu PC real, cámbialo por <code class="inline">prompt</code>.</li>
+        <li>Cada opción del <code class="inline">if/else if</code> llama a UNA de tus funciones. Nada de reescribir cálculos.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">catalogo.js — cierre del archivo</span></div>
+<pre class="code">// let opcion;
+// do {
+//   console.log("\n=== MI CATÁLOGO ===");
+//   console.log("1) Agregar 2) Ver 3) Marcar vista 4) Por género 5) Recomendar 6) Tiempo visto 7) Salir");
+//   opcion = prompt("Opción:");   // (o pedir, para probar)
+//   if (opcion === "1") { ... }
+//   else if (opcion === "2") { ... }
+//   ...
+// } while (opcion !== "7");
+</pre>
+    </div>
+    <div class="goal">
+      <pre>=== MI CATÁLOGO ===
+1) Agregar 2) Ver 3) Marcar vista 4) Por género 5) Recomendar 6) Tiempo visto 7) Salir
+Opción: 2
+[ ] 1. Matrix (Acción)
+[ ] 2. Coco (Animación)
+[ ] 3. Inception (Acción)
+
+Opción: 3 → Título: Matrix
+✅ Vista: Matrix
+
+Opción: 5
+Te faltan: Coco, Inception
+
+Opción: 6
+Tiempo visto: 136 min
+
+Opción: 7
+¡Buen maratón! 🍿</pre>
+      <p class="nota">Ejemplo de una sesión. El diseño del menú y los textos son tu decisión; lo importante es que cada opción use una función tuya y que el ciclo termine al elegir Salir.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add catalogo.js</code> → <code>git commit -m "feat: jefe final - menu do/while"</code> → <code>git push</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Venciste al Jefe Final? Márcalo</span><span class="txt-on">🏆 ¡JEFE FINAL DERROTADO!</span></label>
+  </section>
+
+  <!-- ===================== CHECKLIST ===================== -->
+  <section class="checklist">
+    <h2>📦 Antes de entregar, revisa</h2>
+    <p>Marca cada punto. Si todos están ✅, estás listo para entregar.</p>
+    <label><input type="checkbox"> Mi <code class="inline">catalogo.js</code> tiene las <strong>6 funciones</strong> + el <strong>menú do/while</strong> y funciona completo.</label>
+    <label><input type="checkbox"> Usé <strong>arrow functions</strong>, <strong>find</strong>, <strong>filter</strong>, <strong>reduce</strong> y <strong>cambié el estado</strong> de un objeto (vista).</label>
+    <label><input type="checkbox"> El menú está hecho con <strong>do/while</strong> y solo <strong>invoca</strong> mis funciones (no repite lógica).</label>
+    <label><input type="checkbox"> Validé el caso de marcar una película que <strong>no existe</strong> (guard clause).</label>
+    <label><input type="checkbox"> Tengo <strong>un commit por etapa</strong> (revisa con <code class="inline">git log --oneline</code>).</label>
+    <label><input type="checkbox"> Subí a <strong>GitHub</strong> y publiqué en <strong>GitHub Pages</strong> (abre sin errores en F12).</label>
+    <label><input type="checkbox"> Voy a entregar <strong>dos enlaces</strong>: el del repositorio y el de GitHub Pages.</label>
+  </section>
+
+  <p style="text-align:center; margin-top:48px;"><a class="back-top" href="#">↑ Volver al inicio</a></p>
+
+  <footer>
+    🎬 Actividad integradora — Módulo 4 · Lección 04 · Mi Catálogo de Películas<br>
+    Construye por etapas, versiona con Git, sube a GitHub y publica en Pages.<br>
+    Aplica TODO lo visto a un sistema nuevo: funciones, arrow, find, filter, reduce y do/while.
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    "use strict";
+    var checks = document.querySelectorAll('section.reto .done input[type="checkbox"]');
+    var contador = document.getElementById('contador');
+    function actualizar() {
+      var hechas = 0;
+      checks.forEach(function (c) { if (c.checked) hechas++; });
+      if (contador) contador.textContent = hechas;
+    }
+    checks.forEach(function (c) { c.addEventListener('change', actualizar); });
+    actualizar();
+  })();
+</script>
+</body>
+</html>
